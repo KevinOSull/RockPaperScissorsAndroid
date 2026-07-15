@@ -21,14 +21,30 @@ public class MainActivity extends AppCompatActivity {
 
     private int[] winnerImages = new int[]{};
     private int[]loserImages = new int[]{};
-
-    private Button rockButton;
-    private Button scissorsButton;
-    private Button paperButton;
+    private static final int BEST_OF_THREE_GAMES = 3;
+    private static final int BEST_OF_FIVE_GAMES = 5;
+    private static final int BEST_OF_TEN_GAMES = 10;
+    private static final int BEST_OF_THREE = 1;
+    private static final int BEST_OF_FIVE = 2;
+    private static final int BEST_OF_TEN = 3;
+    private Button rockBtn;
+    private Button scissorsBtn;
+    private Button paperBtn;
     private Button bestOfThreeGamesBtn;
     private Button bestOfFiveGamesBtn;
     private Button bestOfTenGamesBtn;
     private Button resetGameBtn;
+    private int level;
+    private int turns;
+    private int buttonId;
+    private int computerScore = 0;
+    private int playerScore = 0;
+    private int playerRoundScore = 0;
+    private int computerRoundScore = 0;
+    private int playerChoice;
+    private int computerChoice;
+    private static GameStatus gameStatus = GameStatus.GAME_IN_PROGRESS;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
