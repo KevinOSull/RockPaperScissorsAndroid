@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
     private int playerChoice;
     private int computerChoice;
     private static GameStatus gameStatus = GameStatus.GAME_IN_PROGRESS;
+    private static int foo;
 
 
     @Override
