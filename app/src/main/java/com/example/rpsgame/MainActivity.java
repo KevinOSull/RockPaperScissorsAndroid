@@ -2,6 +2,7 @@ package com.example.rpsgame;
 
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -28,6 +29,10 @@ public class MainActivity extends AppCompatActivity {
    private int[] numberOfRounds = new int[]{BEST_OF_THREE_GAMES,BEST_OF_FIVE_GAMES,BEST_OF_TEN_GAMES};
    private String[] roundNumber = new String[]{"Best of Three","Best of Five","Best of Ten"};
 
+   private int[] gameFlowImages = new int[]{R.drawable.rock,R.drawable.paper,R.drawable.scissors};
+   private int[] winnerImages = new int[]{R.drawable.trophy,R.drawable.winner2};
+   private int[] loserImages = new int[]{R.drawable.loser,R.drawable.loser2};
+
    private int computerChoice;
    private int playerChoice;
    private int playerScore = 0;
@@ -45,7 +50,38 @@ public class MainActivity extends AppCompatActivity {
    private TextView[] numberOfGamesLabel;
    private Button[] numberOfGamesButtons;
    private Button[] gameFlowButtons;
-   private Button[] gameFlowLabels;
+   private TextView[] gameFlowLabels;
+
+   private Button bestOfThreeButton;
+   private Button bestOfFiveButton;
+   private Button bestOfTenButton;
+
+   private Button rockButton;
+   private Button paperButton;
+   private Button scissorsButton;
+   private Button resetButton;
+   private Button submitButton;
+
+   private TextView bestOfThreeGamesLabel;
+   private TextView bestOfFiveGamesLabel;
+   private TextView bestOfTenGamesLabel;
+   private TextView rockLabel;
+   private TextView paperLabel;
+   private TextView scissorsLabel;
+   private TextView userScoreLabel;
+   private TextView computerScoreLabel;
+   private TextView computerRoundScoreLabel;
+   private TextView playerRoundScoreLabel;
+   private TextView activeLabel;
+
+   private ImageView playerChoiceImageView;
+   private ImageView computerChoiceImageView;
+   private ImageView endGameResultsImage;
+
+   private Runnable clearScreenTimer;
+   private Runnable displayWhoWonTimer;
+
+
 
 
     @Override
@@ -57,6 +93,39 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void findViews(){
+        submitButton = findViewById(R.id.submit_button);
+        resetButton = findViewById(R.id.reset_button);
+        rockButton = findViewById(R.id.rock_button);
+        paperButton = findViewById(R.id.paper_button);
+        scissorsButton = findViewById(R.id.scissors_button);
+        bestOfThreeButton = findViewById(R.id.best_of_three_games);
+        bestOfFiveButton = findViewById(R.id.best_of_five_games);
+        bestOfTenButton = findViewById(R.id.best_of_ten_games);
 
+        bestOfThreeGamesLabel = findViewById(R.id.best_of_three_text_field);
+        bestOfFiveGamesLabel = findViewById(R.id.best_of_five_text_field);
+        bestOfTenGamesLabel = findViewById(R.id.best_of_ten_text_field);
+        userScoreLabel = findViewById(R.id.user_score);
+        computerScoreLabel = findViewById(R.id.computer_score);
+        computerRoundScoreLabel = findViewById(R.id.computer_round_score);
+        playerRoundScoreLabel = findViewById(R.id.user_round_score);
+
+        playerChoiceImageView = findViewById(R.id.player_image);
+        computerChoiceImageView = findViewById(R.id.computer_image);
+        endGameResultsImage = findViewById(R.id.image_game_result_view);
+
+        numberOfGamesLabel = initArray(bestOfThreeGamesLabel,bestOfFiveGamesLabel,bestOfTenGamesLabel);
+        numberOfGamesButtons = initArray(bestOfThreeButton,bestOfFiveButton,bestOfTenButton);
+        gameFlowButtons = initArray(rockButton,paperButton,scissorsButton);
+        gameFlowLabels = initArray(rockLabel,paperLabel,scissorsLabel);
+
+    }
+
+    private Button[] initArray(Button...items){
+        return items;
+    }
+
+    private TextView[] initArray(TextView...items){
+        return items;
     }
 }
