@@ -177,12 +177,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private int processButton(){
-        for(int i = 0; i < buttonNumbers.length; i++){
-            level = buttonNumbers[i];
-            roundRemaining = level;
-            targetWins = calculateTargetWins(level);
-            activeLabel = numberOfGamesLabel[i];
-            printOutNumberOfGames(activeLabel,numberOfRounds[i]);
+        for(int i = 0; i < buttonNumbers.length; i++) {
+            if (buttonId == buttonNumbers[i]) {
+                level = buttonNumbers[i];
+                roundRemaining = level;
+                targetWins = calculateTargetWins(level);
+                activeLabel = numberOfGamesLabel[i];
+                printOutNumberOfGames(activeLabel, numberOfRounds[i]);
+            }
         }
         return buttonId;
     }
@@ -242,7 +244,7 @@ public class MainActivity extends AppCompatActivity {
 
    }
    private void printOutNumberOfGames(TextView view,int numberOfGames){
-
+        view.setText(" " + numberOfGames);
    }
 
    private void buttonControl(Button[] buttons,boolean isEnabled){
