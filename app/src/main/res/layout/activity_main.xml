@@ -76,7 +76,7 @@
                 android:id="@+id/best_of_three_text_field"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="hello"
+                android:text=""
                 />
 
         </LinearLayout>
@@ -100,7 +100,7 @@
                 android:id="@+id/best_of_five_text_field"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="hello"
+                android:text=""
                 />
         </LinearLayout>
 
@@ -122,7 +122,7 @@
                 android:id="@+id/best_of_ten_text_field"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="hello"
+                android:text=""
                 />
         </LinearLayout>
 
