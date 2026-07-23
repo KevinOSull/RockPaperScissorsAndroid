@@ -1,6 +1,7 @@
 package com.example.rpsgame;
 
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -16,7 +17,6 @@ import java.util.Random;
 public class MainActivity extends AppCompatActivity {
 
    private static final Random RANDOM_GENERATOR = new Random();
-   private static GameStatus gameStatus;
    private static final int BEST_OF_THREE_GAMES = 3;
    private static final int BEST_OF_FIVE_GAMES = 5;
    private static final int BEST_OF_TEN_GAMES = 10;
@@ -81,17 +81,67 @@ public class MainActivity extends AppCompatActivity {
    private Runnable clearScreenTimer;
    private Runnable displayWhoWonTimer;
 
-
-
-
-    @Override
+   private GameStatus gameStatus = GameStatus.GAME_IN_PROGRESS;
+   @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
+        findViews();
+        initializeGamePlayButtonsListener();
+        initializeNumberOfGamesButtonsListener();
 
     }
 
+    private void initializeGamePlayButtonsListener(){
+       for(int i = 0; i < gameFlowButtons.length; i++){
+           gamePlayButtons(gameFlowButtons[i]);
+       }
+   }
+
+   private void initializeNumberOfGamesButtonsListener(){
+       for(int i = 0; i < numberOfGamesButtons.length; i++){
+            numberOfGamesActionListener(numberOfGamesButtons[i]);
+       }
+   }
+
+   private void numberOfGamesActionListener(Button buttons){
+       buttons.setOnClickListener(new View.OnClickListener(){
+           @Override
+           public void onClick(View v) {
+                turns = setNumberOfGames(v);
+                turns = level;
+           }
+       });
+   }
+
+   private void gamePlayButtons(Button button){
+       button.setOnClickListener(new View.OnClickListener(){
+           @Override
+           public void onClick(View v) {
+               if(gameStatus == GameStatus.GAME_IN_PROGRESS){
+                    setChoice(v);
+                    resolveRound();
+               }
+           }
+       });
+   }
+
+   private void setChoice(View v){
+
+   }
+
+   private void resolveRound(){
+
+   }
+
+   private int setNumberOfGames(View v){
+       return 0;
+   }
+
+   private int processButton(){
+       return 0;
+   }
     private void findViews(){
         submitButton = findViewById(R.id.submit_button);
         resetButton = findViewById(R.id.reset_button);
