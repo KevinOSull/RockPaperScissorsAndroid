@@ -346,7 +346,7 @@
             android:layout_height="wrap_content"
             android:textSize="50sp"
             android:layout_marginTop="20dp"
-            android:text="Computer won"/>
+            android:text=""/>
 
         <ImageView
             android:id="@+id/image_game_result_view"
