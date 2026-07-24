@@ -12,6 +12,8 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
@@ -74,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
    private TextView computerRoundScoreLabel;
    private TextView playerRoundScoreLabel;
    private TextView activeLabel;
-
+   private TextView printOutWhoWonLabel;
    private ImageView playerChoiceImageView;
    private ImageView computerChoiceImageView;
    private ImageView endGameResultsImage;
@@ -189,6 +191,19 @@ public class MainActivity extends AppCompatActivity {
         return buttonId;
     }
     private void checkWhoWon(){
+        Map<Integer,Boolean> winConditions = new LinkedHashMap<>();
+        winConditions.put(R.string.computer_win,hasComputerWon());
+        winConditions.put(R.string.player_win,hasPlayerWon());
+        winConditions.put(R.string.outcome_is_a_draw,isGameDrawn());
+        for(Map.Entry<Integer,Boolean> entry:winConditions.entrySet()){
+            if(entry.getValue()){
+                String message = getString(entry.getKey());
+                printOutWhoWon(printOutWhoWonLabel,message);
+                scheduleWinTextClear();
+                updateScore();
+                checkRoundWinner();
+            }
+        }
 
    }
 
@@ -220,8 +235,9 @@ public class MainActivity extends AppCompatActivity {
 
    }
 
-   private void printOutWhoWon(String message){
-
+   private TextView printOutWhoWon(TextView view,String message){
+       view.setText(message);
+       return view;
    }
 
    private void resetGameValues(){
