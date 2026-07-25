@@ -208,15 +208,19 @@ public class MainActivity extends AppCompatActivity {
    }
 
    private boolean hasComputerWon(){
-       return true;
+       return  (computerChoice == 0 && playerChoice == 2)||
+               (computerChoice == 2 && playerChoice == 1)||
+               (computerChoice == 1 && playerChoice == 0);
    }
 
    private boolean hasPlayerWon(){
-       return true;
+       return  (playerChoice == 0 && computerChoice == 2)||
+               (playerChoice == 2 && computerChoice == 1)||
+               (playerChoice == 1 && computerChoice == 0);
    }
 
    private boolean isGameDrawn(){
-       return true;
+       return computerChoice == playerChoice;
    }
 
    private String getGameMessage(String message){
