@@ -204,7 +204,6 @@ public class MainActivity extends AppCompatActivity {
                 checkRoundWinner();
             }
         }
-
    }
 
    private boolean hasComputerWon(){
@@ -228,7 +227,7 @@ public class MainActivity extends AppCompatActivity {
    }
 
    private int calculateTargetWins(int totalRounds){
-       return 0;
+       return (totalRounds/2)+1;
    }
 
    private void resolveRound(){
