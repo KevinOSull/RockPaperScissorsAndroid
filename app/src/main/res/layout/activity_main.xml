@@ -328,7 +328,7 @@
             android:layout_height="wrap_content"
             android:textSize="50sp"
             android:textColor="#FF0000"
-            android:text="Congrats "/>
+            android:text=""/>
 
 
     </LinearLayout>
