@@ -8,9 +8,6 @@ import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -32,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
    private String[] roundNumbers = new String[]{"Best of Three","Best of Five","Best of Ten"};
 
    private int[] gameFlowImages = new int[]{R.drawable.rock,R.drawable.paper,R.drawable.scissors};
+
    private int[] winnerImages = new int[]{R.drawable.trophy,R.drawable.winner2};
    private int[] loserImages = new int[]{R.drawable.loser,R.drawable.loser2};
 
@@ -83,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
 
    private Runnable clearScreenTimer;
    private Runnable displayWhoWonTimer;
-   private Runnable clearLastImage;
+
 
    private GameStatus gameStatus = GameStatus.GAME_IN_PROGRESS;
    @Override
@@ -92,9 +90,14 @@ public class MainActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
         findViews();
+        playerChoiceImageView.setVisibility(View.INVISIBLE);
+        computerChoiceImageView.setVisibility(View.INVISIBLE);
+        endGameResultsImage.setVisibility(View.INVISIBLE);
         initializeGamePlayButtonsListener();
         initializeNumberOfGamesButtonsListener();
-
+        resetButtonListener();
+        //buttonControl(gameFlowButtons, false);
+        resetGameValues();
     }
 
     private void initializeGamePlayButtonsListener(){
@@ -131,41 +134,38 @@ public class MainActivity extends AppCompatActivity {
        });
    }
 
-   private Runnable showTemporaryMessage(TextView view,int duration,Runnable runnable){
-       view.removeCallbacks(runnable);
-       Runnable newTask = new Runnable(){
-           @Override
-           public void run() {
-               view.setText("");
-           }
-       };
-       view.postDelayed(newTask,duration);
-       return newTask;
-   }
+   private void resetButtonListener(){
+       resetButton.setOnClickListener(new View.OnClickListener(){
 
-   private void showTemporaryImage(ImageView imageView){
-       imageView.removeCallbacks(clearLastImage);
-       clearLastImage = new Runnable(){
-           public void run(){
-               imageView.setVisibility(View.INVISIBLE);
+           @Override
+           public void onClick(View v) {
+               resetGameValues();
            }
-       };
-       imageView.postDelayed(clearLastImage,5000);
+       });
    }
+   private Runnable displayOutputTimer(int timeDelay,Runnable taskToRun){
+        playerChoiceImageView.postDelayed(taskToRun,timeDelay);
+        return taskToRun;
+    }
+
+    private void stopTimer(Runnable task){
+        if(task != null){
+            playerChoiceImageView.removeCallbacks(task);
+        }
+    }
 
    private void setChoice(View v){
         for(int i = 0; i < gameFlowButtons.length; i++){
             if(v.getId() == gameFlowButtons[i].getId()){
                 playerChoice = i;
-                printPlayerChoice(gameFlowLabels[i],gameFlowImages[i]);
+                //printPlayerChoice(gameFlowLabels[i],gameFlowImages[i]);
+                playerChoiceImageView.setImageResource(gameFlowImages[playerChoice]);
+                playerChoiceImageView.setVisibility(View.VISIBLE);
             }
         }
    }
-   private void printPlayerChoice(TextView view,int imageIcon){
-        view.setText(imageIcon);
-    }
 
-    private int setNumberOfGames(View v){
+   private int setNumberOfGames(View v){
         for(int i = 0; i < numberOfGamesButtons.length; i++){
             if(v.getId() == numberOfGamesButtons[i].getId()){
                 buttonId = buttonNumbers[i];
@@ -175,13 +175,14 @@ public class MainActivity extends AppCompatActivity {
         buttonControl(numberOfGamesButtons,false);
         buttonControl(gameFlowButtons,true);
         turns = processButton();
+        resetGameScores();
         return buttonId;
     }
 
     private int processButton(){
         for(int i = 0; i < buttonNumbers.length; i++) {
             if (buttonId == buttonNumbers[i]) {
-                level = buttonNumbers[i];
+                level = numberOfRounds[i];
                 roundRemaining = level;
                 targetWins = calculateTargetWins(level);
                 activeLabel = numberOfGamesLabel[i];
@@ -202,6 +203,7 @@ public class MainActivity extends AppCompatActivity {
                 scheduleWinTextClear();
                 updateScore();
                 checkRoundWinner();
+                break;
             }
         }
    }
@@ -222,20 +224,25 @@ public class MainActivity extends AppCompatActivity {
        return computerChoice == playerChoice;
    }
 
-   private String getGameMessage(String message){
-       return "";
-   }
-
    private int calculateTargetWins(int totalRounds){
        return (totalRounds/2)+1;
    }
 
    private void resolveRound(){
+        computerChoice = getComputerChoice();
+        setComputerImage();
+        checkWhoWon();
+        stopTimer(clearScreenTimer);
+        clearScreenTimer = displayOutputTimer(3000,()->resetGameImages());
+    }
 
+   private int getComputerChoice(){
+       return RANDOM_GENERATOR.nextInt(gameFlowImages.length);
    }
 
    private void scheduleWinTextClear(){
-
+        stopTimer(displayWhoWonTimer);
+        displayWhoWonTimer = displayOutputTimer(3000,()->printOutWhoWonLabel.setText(""));
    }
 
    private TextView printOutWhoWon(TextView view,String message){
@@ -244,63 +251,134 @@ public class MainActivity extends AppCompatActivity {
    }
 
    private void resetGameValues(){
-
+       gameStatus = GameStatus.GAME_IN_PROGRESS;
+       resetGameButtons();
+       resetGameScores();
+       resetGameLabels();
+       resetGameImages();
    }
 
    private void resetGameButtons(){
-
+        buttonControl(gameFlowButtons,false);
+        buttonControl(numberOfGamesButtons,true);
    }
 
    private void resetGameScores(){
-
+        playerScore = 0;
+        computerScore = 0;
+        playerRoundScore = 0;
+        computerRoundScore = 0;
+        printCurrentScores(userScoreLabel, playerScore);
+        printCurrentScores(computerScoreLabel, computerScore);
+        printOutCurrentRoundScores(playerRoundScoreLabel, playerRoundScore);
+        printOutCurrentRoundScores(computerRoundScoreLabel, computerRoundScore);
+        
    }
 
    private void resetGameImages(){
+       playerChoiceImageView.setImageResource(0);
+       computerChoiceImageView.setImageResource(0);
+       playerChoiceImageView.setVisibility(View.INVISIBLE);
+       computerChoiceImageView.setVisibility(View.INVISIBLE);
+       checkIfaNewGameStarted();
+   }
 
+   private void checkIfaNewGameStarted(){
+       if(gameStatus == GameStatus.GAME_IN_PROGRESS){
+           endGameResultsImage.setImageResource(0);
+           endGameResultsImage.setVisibility(View.INVISIBLE);
+       }
    }
 
    private void resetGameLabels(){
-
+       for(int i = 0; i < numberOfGamesLabel.length; i++){
+           numberOfGamesLabel[i].setText("");
+       }
    }
    private void printOutNumberOfGames(TextView view,int numberOfGames){
         view.setText(" " + numberOfGames);
    }
 
    private void buttonControl(Button[] buttons,boolean isEnabled){
-
+       for(int i = 0; i < buttons.length; i++){
+           buttons[i].setEnabled(isEnabled);
+       }
    }
 
    private void setComputerImage(){
-
+       computerChoiceImageView.setImageResource(gameFlowImages[computerChoice]);
+       computerChoiceImageView.setVisibility(View.VISIBLE);
    }
 
    private void printOutCurrentRoundScores(TextView view,int roundScore){
-
+       view.setText(String.valueOf(roundScore));
    }
 
    private void printCurrentScores(TextView view,int score){
-
+       view.setText(String.valueOf(score));
    }
 
    private void updateScore(){
-
+       if(hasComputerWon()){
+           computerScore++;
+           printCurrentScores(computerScoreLabel,computerScore);
+       }else if(hasPlayerWon()){
+           playerScore++;
+           printCurrentScores(userScoreLabel,playerScore);
+       }
    }
 
    private void checkRoundWinner(){
-
+       if(playerScore >= level){
+           handleScoringSystem(true,"Player");
+       }else if(computerScore >= level){
+           handleScoringSystem(false,"Computer");
+       }
    }
 
    private void handleScoringSystem(boolean isPlayer,String winnerName){
-
+       message = winnerName;
+       if(isPlayer){
+           playerRoundScore++;
+           printOutCurrentRoundScores(playerRoundScoreLabel,playerRoundScore);
+       }else{
+           computerRoundScore++;
+           printOutCurrentRoundScores(computerRoundScoreLabel,computerRoundScore);
+       }
+       resetHandScores();
+       roundRemaining--;
+       printOutNumberOfGames(activeLabel,roundRemaining);
+       checkRoundTurns(isPlayer ? playerRoundScore : computerRoundScore);
    }
 
    private void checkRoundTurns(int roundScore){
+       if(roundScore >= targetWins){
+           gameStatus = GameStatus.GAME_OVER;
+           String winner = (playerRoundScore >= targetWins) ? "PLAYER" : "COMPUTER";
+           String message = getString(R.string.end_of_game_message,winner);
+           printOutWhoWon(printOutWhoWonLabel,message);
+           buttonControl(gameFlowButtons,false);
+           checkWhichImageToShow();
+       }
+   }
 
+   private void checkWhichImageToShow(){
+       if(playerRoundScore >= targetWins){
+           int randomWinnerImage = RANDOM_GENERATOR.nextInt(winnerImages.length);
+           endGameResultsImage.setImageResource(winnerImages[randomWinnerImage]);
+       }else{
+           int randomLoserImage = RANDOM_GENERATOR.nextInt(loserImages.length);
+           endGameResultsImage.setImageResource(loserImages[randomLoserImage]);
+       }
+       endGameResultsImage.setVisibility(View.VISIBLE);
    }
 
    private void resetHandScores(){
-
-   }
+       playerScore = 0;
+       computerScore = 0;
+       printCurrentScores(userScoreLabel,playerScore);
+       printCurrentScores(computerScoreLabel,computerScore);
+    }
    private void findViews(){
         submitButton = findViewById(R.id.submit_button);
         resetButton = findViewById(R.id.reset_button);
@@ -322,13 +400,12 @@ public class MainActivity extends AppCompatActivity {
         playerChoiceImageView = findViewById(R.id.player_image);
         computerChoiceImageView = findViewById(R.id.computer_image);
         endGameResultsImage = findViewById(R.id.image_game_result_view);
-
+        printOutWhoWonLabel = findViewById(R.id.end_game_message);
         numberOfGamesLabel = initArray(bestOfThreeGamesLabel,bestOfFiveGamesLabel,bestOfTenGamesLabel);
         numberOfGamesButtons = initArray(bestOfThreeButton,bestOfFiveButton,bestOfTenButton);
         gameFlowButtons = initArray(rockButton,paperButton,scissorsButton);
         gameFlowLabels = initArray(rockLabel,paperLabel,scissorsLabel);
-
-    }
+   }
 
     private Button[] initArray(Button...items){
         return items;
